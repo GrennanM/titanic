@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn import preprocessing
 
 def preprocess(data):
@@ -23,6 +24,9 @@ def preprocess(data):
     data = pd.get_dummies(data, columns=['Embarked'], prefix=['embark'],
      drop_first=True).head()
 
+     # To do: standardize numeric variables Age and Fare
+
+
     # Alternative method of encoding using sklearn
     # encode categorical variable 'Embarked'
     # data['Embarked'] = le.fit_transform(data['Embarked'])
@@ -37,12 +41,11 @@ def main():
 
     dataset = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
     data = pd.read_csv(dataset, encoding='latin-1')
-
-    data = preprocess(data)
+    df = preprocess(data)
 
     # print first few rows in data and data types
-    print(data.head())
-    print (data.info())
+    # print(df.head())
+    print (df.info())
 
 if __name__=='__main__':
     main()
