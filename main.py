@@ -22,10 +22,20 @@ def preprocess(data):
 
     # create n-1 dummy variables for 'Embarked' variable
     data = pd.get_dummies(data, columns=['Embarked'], prefix=['embark'],
-     drop_first=True).head()
+     drop_first=True)
 
-     # To do: standardize numeric variables Age and Fare
 
+    # To do: topcode Fare variable
+
+     # histogram of Age
+    data['Age'].plot.hist(grid=True, rwidth=0.9, color='#607c8e')
+    plt.show()
+
+    # print (data['Fare'])
+
+    # standardize numeric variables Age and Fare
+    numeric = ['Age', 'Fare']
+    data[numeric] = preprocessing.StandardScaler().fit_transform(data[numeric])
 
     # Alternative method of encoding using sklearn
     # encode categorical variable 'Embarked'
@@ -46,6 +56,7 @@ def main():
     # print first few rows in data and data types
     # print(df.head())
     print (df.info())
+
 
 if __name__=='__main__':
     main()
