@@ -24,14 +24,18 @@ def preprocess(data):
     data = pd.get_dummies(data, columns=['Embarked'], prefix=['embark'],
      drop_first=True)
 
+    # topcode Fare variable at 100
+    for i in range(0, len(data['Fare'])):
+        try:
+            if int(data['Fare'][i]) >= 100:
+                data.at[i, 'Fare'] = 100
+        except KeyError:
+            pass
+            # print ("KeyError Caught")
 
-    # To do: topcode Fare variable
-
-     # histogram of Age
-    data['Age'].plot.hist(grid=True, rwidth=0.9, color='#607c8e')
-    plt.show()
-
-    # print (data['Fare'])
+     # histogram of Fare
+    # data['Fare'].plot.hist(grid=True, rwidth=0.9, color='#607c8e')
+    # plt.show()
 
     # standardize numeric variables Age and Fare
     numeric = ['Age', 'Fare']
@@ -55,6 +59,7 @@ def main():
 
     # print first few rows in data and data types
     # print(df.head())
+    # print (df.describe())
     print (df.info())
 
 
