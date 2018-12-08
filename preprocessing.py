@@ -18,7 +18,8 @@ def preprocess(data):
      inplace = True)
 
     # change males = 1, females = 0
-    data['Sex'] = data['Sex'].map( {'male':1, 'female':0} )
+    label = preprocessing.LabelEncoder()
+    data['Sex'] = label.fit_transform(data['Sex'])
 
     # create n-1 dummy variables for 'Embarked' variable
     data = pd.get_dummies(data, columns=['Embarked'], prefix=['embark'],

@@ -20,7 +20,7 @@ def main():
     # split into 90% training, 10% testing
     X = df.drop(columns = ['Survived'])
     y = df['Survived']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.10)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)
 
     # build a Random Forest Model
     rf = RandomForestClassifier(n_estimators=500, max_depth=None,
