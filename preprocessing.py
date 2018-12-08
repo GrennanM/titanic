@@ -48,7 +48,7 @@ def main():
     dataset = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
     data = pd.read_csv(dataset, encoding='latin-1')
     df = preprocess(data)
-    data.to_csv('titanicClean.csv')
+    df.to_csv('titanicClean.csv')
 
     # print first few rows in data and data types
     # print(df.head())
