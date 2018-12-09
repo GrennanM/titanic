@@ -4,18 +4,24 @@ import matplotlib.pyplot as plt
 from sklearn import preprocessing
 
 def preprocess(data):
+    ########## Missing Data ###############
     # count the number of missing values
-    # print (data.isnull().sum())
+    # print (data['Fare'].isnull().sum())
 
-    # impute mean in place of missing values
-    data['Age'].fillna(data['Age'].mean(), inplace=True)
+    # impute mean in place of missing values for Age
+    data['Age'].fillna(data['Age'].median(), inplace=True)
 
-    # drop 2 missing values from Embarked
-    data.dropna(subset=['Embarked'], inplace=True)
+    # impute median in place of missing value in Fare
+    data['Fare'].fillna(data['Fare'].median(), inplace = True)
+
+    # impute mode for Embarked
+    data['Embarked'].fillna(data['Embarked'].mode()[0], inplace = True)
 
     # drop columns: Name, ID, Cabin, Ticket
-    data.drop(columns = ['Name', 'PassengerId', 'Cabin', 'Ticket'],
-     inplace = True)
+    data.drop(columns = ['PassengerId', 'Cabin', 'Ticket'], inplace = True)
+
+    # print (data.isnull().sum())
+    ########### END Missing Data #############
 
     # change males = 1, females = 0
     label = preprocessing.LabelEncoder()
@@ -49,7 +55,8 @@ def main():
     dataset = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
     data = pd.read_csv(dataset, encoding='latin-1')
     df = preprocess(data)
-    df.to_csv('titanicClean.csv')
+    print (df.head())
+    df.to_csv('titanicCleanTrain.csv')
 
     # print first few rows in data and data types
     # print(df.head())
