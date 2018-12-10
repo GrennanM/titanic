@@ -18,7 +18,7 @@ def preprocess(data):
     data['Embarked'].fillna(data['Embarked'].mode()[0], inplace = True)
 
     # drop columns: Name, ID, Cabin, Ticket
-    data.drop(columns = ['PassengerId', 'Cabin', 'Ticket'], inplace = True)
+    data.drop(columns = ['PassengerId', 'Cabin', 'Ticket', 'Name'], inplace = True)
 
     # print (data.isnull().sum())
     ########### END Missing Data #############
