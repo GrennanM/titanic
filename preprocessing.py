@@ -18,7 +18,7 @@ def preprocess(data):
     data['Embarked'].fillna(data['Embarked'].mode()[0], inplace = True)
 
     # drop columns: Name, ID, Cabin, Ticket
-    data.drop(columns = ['PassengerId', 'Cabin', 'Ticket', 'Name'], inplace = True)
+    data.drop(columns = ['PassengerId', 'Cabin', 'Ticket'], inplace = True)
 
     # print (data.isnull().sum())
     ########### END Missing Data #############
@@ -26,6 +26,19 @@ def preprocess(data):
     # change males = 1, females = 0
     label = preprocessing.LabelEncoder()
     data['Sex'] = label.fit_transform(data['Sex'])
+
+    # create title variable & dummy variable
+    data['Title'] = data['Name'].str.split(", ", expand=True)[1].str.split(".", expand=True)[0]
+    data.drop(columns=['Name'], inplace=True)
+    title_names = (data['Title'].value_counts() < 10) #remove uncommon titles
+    data['Title'] = data['Title'].apply(lambda x: 'Misc' if title_names.loc[x] == True else x)
+    data = pd.get_dummies(data, columns=['Title'], prefix=['title'],
+    drop_first=True)
+
+    # create a family variable
+    data['FamilySize'] = data ['SibSp'] + data['Parch'] + 1
+    data['IsAlone'] = 1 #initialize to yes/1 is alone
+    data['IsAlone'].loc[data['FamilySize'] > 1] = 0
 
     # create n-1 dummy variables for 'Embarked' variable
     data = pd.get_dummies(data, columns=['Embarked'], prefix=['embark'],
@@ -52,16 +65,15 @@ def preprocess(data):
 
 def main():
 
-    dataset = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
-    data = pd.read_csv(dataset, encoding='latin-1')
+    data = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
+    data = pd.read_csv(data, encoding='latin-1')
     df = preprocess(data)
-    print (df.head())
     df.to_csv('titanicCleanTrain.csv')
 
     # print first few rows in data and data types
     # print(df.head())
-    # # print (df.describe())
-    # # print (df.info())
+    # print (df.describe())
+    print (df.info())
 
 if __name__=='__main__':
     main()
