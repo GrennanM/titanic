@@ -28,9 +28,12 @@ def main():
     #  min_samples_split=10, random_state=0, min_samples_leaf=4,
     #  max_features='log2', bootstrap=False)
 
+    # Accuracy = 0.8309
     grid_search_model = RandomForestClassifier(n_estimators=1500, max_depth=5,
     max_features='sqrt', min_samples_leaf=3, min_samples_split=10,
     bootstrap=True)
+
+    # grid_search_model.fit(X_train, y_train)
 
     # # fit the training model
     # baseline_model.fit(X_train, y_train)
@@ -39,9 +42,9 @@ def main():
     # y_pred = baseline_model.predict(X_test)
     # print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 
-    # # cross-validation
-    # scores = cross_val_score(grid_search_model, X, y, cv=10, n_jobs=-1)
-    # print ("Accuracy: ", scores.mean())
+    # cross-validation
+    scores = cross_val_score(grid_search_model, X, y, cv=10, n_jobs=-1)
+    print ("Accuracy: ", scores.mean())
 
     # ################# Hyper-Parameter Tuning #########################
     # ###### Randomized Search #############
@@ -93,7 +96,7 @@ def main():
     # param_grid = {'n_estimators': [1000],
     # 'min_samples_split': [8, 9, 10, 11, 12],
     # 'min_samples_leaf': [3, 4, 5],
-    # 'max_features': [None, 'log2', 'sqrt'],
+    # 'max_features': [3, 4, 5, 6],
     # 'max_depth': [5, 10, 15],
     # 'bootstrap': [True, False]}
     #
@@ -165,8 +168,15 @@ def main():
 
 
     # #################### Feature Importance Plot ##################
-    # # Build a forest and compute the feature importances
-    # forest = ExtraTreesClassifier(n_estimators=250,
+    # imyportances = pd.DataFrame({'feature':X_train.columns,'importance':np.round(grid_search_model.feature_importances_,3)})
+    # importances = importances.sort_values('importance',
+    # ascending=False).set_index('feature')
+    #
+    # print (importances.head(20))
+
+
+    # Build a forest and compute the feature importances
+    # forest = ExtraTreesClassifier(n_estimators=1000,
     #                               random_state=0)
     #
     # forest.fit(X_train, y_train)
@@ -177,10 +187,11 @@ def main():
     #
     # # Print the feature ranking
     # print("Feature ranking:")
-    #
     # for f in range(X.shape[1]):
     #     print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
     #
+    # print (X.info())
+
     # # Plot the feature importances of the forest
     # plt.figure()
     # plt.title("Feature importances")
@@ -189,26 +200,25 @@ def main():
     # plt.xticks(range(X.shape[1]), indices)
     # plt.xlim([-1, X.shape[1]])
     # plt.show()
-    # print (X.info())
     # ###################### End Feature Importance Plot ######################
 
     # # test dataset
-    dt = '/home/markg/kaggle/titanic/titanicCleanTest.csv'
-    test_df = pd.read_csv(dt, encoding='latin-1')
-    test_df = test_df.drop(columns = ['Unnamed: 0']) # identifier column
-
-    # prepare passengerID for submission file
-    passengerID = test_df['PassengerId']
-    test_df.drop(columns = ['PassengerId'], inplace = True)
-
-    # fit Random Forest for submission
-    grid_search_model.fit(X, y)
-    predictions = grid_search_model.predict(test_df)
-
-    # create submission file
-    submission = pd.DataFrame({'PassengerId':passengerID, 'Survived':predictions})
-    filename = 'titanicPredictions2.csv'
-    submission.to_csv(filename, index=False)
+    # dt = '/home/markg/kaggle/titanic/titanicCleanTest.csv'
+    # test_df = pd.read_csv(dt, encoding='latin-1')
+    # test_df = test_df.drop(columns = ['Unnamed: 0']) # identifier column
+    #
+    # # prepare passengerID for submission file
+    # passengerID = test_df['PassengerId']
+    # test_df.drop(columns = ['PassengerId'], inplace = True)
+    #
+    # # fit Random Forest for submission
+    # grid_search_model.fit(X, y)
+    # predictions = grid_search_model.predict(test_df)
+    #
+    # # create submission file
+    # submission = pd.DataFrame({'PassengerId':passengerID, 'Survived':predictions})
+    # filename = 'titanicPredictions4.csv'
+    # submission.to_csv(filename, index=False)
 
 if __name__=='__main__':
     main()
