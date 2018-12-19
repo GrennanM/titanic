@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import re
 from sklearn import preprocessing
 
 def preprocess(data):
@@ -16,9 +17,6 @@ def preprocess(data):
 
     # impute mode for Embarked
     data['Embarked'].fillna(data['Embarked'].mode()[0], inplace = True)
-
-    # drop columns: Name, ID, Cabin, Ticket
-    data.drop(columns = ['PassengerId', 'Cabin', 'Ticket'], inplace = True)
 
     # print (data.isnull().sum())
     ########### END Missing Data #############
@@ -53,10 +51,6 @@ def preprocess(data):
             pass
             # print ("KeyError Caught")
 
-     # histogram of Fare
-    # data['Fare'].plot.hist(grid=True, rwidth=0.9, color='#607c8e')
-    # plt.show()
-
     # standardize numeric variables Age and Fare
     numeric = ['Age', 'Fare']
     data[numeric] = preprocessing.StandardScaler().fit_transform(data[numeric])
@@ -65,15 +59,26 @@ def preprocess(data):
 
 def main():
 
-    data = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
-    data = pd.read_csv(data, encoding='latin-1')
-    df = preprocess(data)
-    df.to_csv('titanicCleanTrain.csv')
+    # pre-processing training data
+    dataTrain = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
+    data = pd.read_csv(dataTrain, encoding='latin-1')
+    dfTrain = preprocess(data)
+    dfTrain.drop(columns = ['PassengerId', 'Cabin', 'Ticket'], inplace = True)
+    dfTrain.to_csv('titanicCleanTrain.csv')
 
-    # print first few rows in data and data types
-    # print(df.head())
-    # print (df.describe())
-    print (df.info())
+    # pre-processing test data
+    dataTest = '/home/markg/kaggle/titanic/dataset/titanicTest.csv'
+    data = pd.read_csv(dataTest, encoding='latin-1')
+    dfTest = preprocess(data)
+    dfTest.drop(columns = ['Cabin', 'Ticket'], inplace = True)
+    dfTest.to_csv('titanicCleanTrain.csv')
+
+    # print data info
+    print ("Train dataset: ")
+    print (dfTrain.info())
+    print("-"*20)
+    print ("Test dataset: ")
+    print (dfTest.info())
 
 if __name__=='__main__':
     main()
