@@ -49,11 +49,11 @@ def preprocess(data):
                 data.at[i, 'Fare'] = 100
         except KeyError:
             pass
-            # print ("KeyError Caught")
+    #         # print ("KeyError Caught")
 
     # standardize numeric variables Age and Fare
     numeric = ['Age', 'Fare']
-    data[numeric] = preprocessing.StandardScaler().fit_transform(data[numeric])
+    preprocessing.StandardScaler().fit_transform(data[numeric])
 
     return data
 
@@ -71,12 +71,12 @@ def main():
     data = pd.read_csv(dataTest, encoding='latin-1')
     dfTest = preprocess(data)
     dfTest.drop(columns = ['Cabin', 'Ticket'], inplace = True)
-    dfTest.to_csv('titanicCleanTrain.csv')
+    dfTest.to_csv('titanicCleanTest.csv')
 
     # print data info
     print ("Train dataset: ")
     print (dfTrain.info())
-    print("-"*20)
+    print("-"*30)
     print ("Test dataset: ")
     print (dfTest.info())
 
