@@ -52,6 +52,9 @@ def preprocess(data):
             pass
     #         # print ("KeyError Caught")
 
+    # Apply log to Fare to reduce skewness distribution
+    data["Fare"] = data["Fare"].map(lambda i: np.log(i) if i > 0 else 0)
+
     # standardize numeric variables Age and Fare
     numeric = ['Age', 'Fare']
     preprocessing.StandardScaler().fit_transform(data[numeric])
