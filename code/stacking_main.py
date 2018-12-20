@@ -11,6 +11,7 @@ from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from collections import OrderedDict
 from sklearn.model_selection import KFold
 from xgboost import XGBClassifier
+from datetime import datetime
 
 # train dataset
 dataset = '/home/markg/kaggle/titanic/data/working/titanicCleanTrain.csv'
@@ -158,7 +159,13 @@ gbm = xgb.XGBClassifier(
  scale_pos_weight=1).fit(x_train, y_train)
 predictions = gbm.predict(x_test)
 
-# Generate Submission File
-StackingSubmission = pd.DataFrame({ 'PassengerId': PassengerId,
-                            'Survived': predictions })
-StackingSubmission.to_csv("StackingSubmission.csv", index=False)
+# # Generate Submission File
+# StackingSubmission = pd.DataFrame({ 'PassengerId': PassengerId,
+#                             'Survived': predictions })
+# StackingSubmission.to_csv("StackingSubmission.csv", index=False)
+
+# create submission file
+submission = pd.DataFrame({'PassengerId':PassengerId, 'Survived':predictions})
+path = '/home/markg/kaggle/titanic/data/submissions/'
+filename = 'stacking_submission_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
+submission.to_csv(path+filename, index=False)
