@@ -7,12 +7,13 @@ from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from collections import OrderedDict
+from datetime import datetime
 
 def main():
     # train dataset
-    dataset = '/home/markg/kaggle/titanic/titanicCleanTrain.csv'
-    df = pd.read_csv(dataset, encoding='latin-1')
-    df = df.drop(columns = ['Unnamed: 0']) # identifier column
+    dataset = '/home/markg/kaggle/titanic/data/working/titanicCleanTrain.csv'
+    df = pd.read_csv(dataset, encoding='latin-1', index_col=0)
+    # df = df.drop(columns = ['Unnamed: 0']) # identifier column
 
     # print first few rows in data and data types
     # print(df.head())
@@ -42,9 +43,9 @@ def main():
     # y_pred = baseline_model.predict(X_test)
     # print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 
-    # cross-validation
-    scores = cross_val_score(grid_search_model, X, y, cv=10, n_jobs=-1)
-    print ("Accuracy: ", scores.mean())
+    # # cross-validation
+    # scores = cross_val_score(grid_search_model, X, y, cv=10, n_jobs=-1)
+    # print ("Accuracy: ", scores.mean())
 
     # ################# Hyper-Parameter Tuning #########################
     # ###### Randomized Search #############
@@ -202,23 +203,23 @@ def main():
     # plt.show()
     # ###################### End Feature Importance Plot ######################
 
-    # # test dataset
-    # dt = '/home/markg/kaggle/titanic/titanicCleanTest.csv'
-    # test_df = pd.read_csv(dt, encoding='latin-1')
-    # test_df = test_df.drop(columns = ['Unnamed: 0']) # identifier column
-    #
-    # # prepare passengerID for submission file
-    # passengerID = test_df['PassengerId']
-    # test_df.drop(columns = ['PassengerId'], inplace = True)
-    #
-    # # fit Random Forest for submission
-    # grid_search_model.fit(X, y)
-    # predictions = grid_search_model.predict(test_df)
-    #
-    # # create submission file
-    # submission = pd.DataFrame({'PassengerId':passengerID, 'Survived':predictions})
-    # filename = 'titanicPredictions4.csv'
-    # submission.to_csv(filename, index=False)
+    # test dataset
+    dt = '/home/markg/kaggle/titanic/data/working/titanicCleanTest.csv'
+    test_df = pd.read_csv(dt, encoding='latin-1', index_col=0)
+
+    # prepare passengerID for submission file
+    passengerID = test_df['PassengerId']
+    test_df.drop(columns = ['PassengerId'], inplace = True)
+
+    # fit Random Forest for submission
+    grid_search_model.fit(X, y)
+    predictions = grid_search_model.predict(test_df)
+
+    # create submission file
+    submission = pd.DataFrame({'PassengerId':passengerID, 'Survived':predictions})
+    path = '/home/markg/kaggle/titanic/data/submissions/'
+    filename = 'rf_submission_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
+    submission.to_csv(path+filename, index=False)
 
 if __name__=='__main__':
     main()

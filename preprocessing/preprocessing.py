@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 from sklearn import preprocessing
+from datetime import datetime
 
 def preprocess(data):
     ########## Missing Data ###############
@@ -59,19 +60,27 @@ def preprocess(data):
 
 def main():
 
-    # pre-processing training data
-    dataTrain = '/home/markg/kaggle/titanic/dataset/titanicTrain.csv'
-    data = pd.read_csv(dataTrain, encoding='latin-1')
+    # read original data and pre-processing training data
+    dataTrain = '/home/markg/kaggle/titanic/data/original/titanicTrain.csv'
+    data = pd.read_csv(dataTrain, encoding='latin-1') # read original data
     dfTrain = preprocess(data)
     dfTrain.drop(columns = ['PassengerId', 'Cabin', 'Ticket'], inplace = True)
-    dfTrain.to_csv('titanicCleanTrain.csv')
 
-    # pre-processing test data
-    dataTest = '/home/markg/kaggle/titanic/dataset/titanicTest.csv'
+    # write working training data to csv
+    training_path = '/home/markg/kaggle/titanic/data/working/'
+    data_train_filename = 'train_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
+    dfTrain.to_csv(training_path + data_train_filename, index=False)
+
+    # # read original data and pre-processing test data
+    dataTest = '/home/markg/kaggle/titanic/data/original/titanicTest.csv'
     data = pd.read_csv(dataTest, encoding='latin-1')
     dfTest = preprocess(data)
     dfTest.drop(columns = ['Cabin', 'Ticket'], inplace = True)
-    dfTest.to_csv('titanicCleanTest.csv')
+
+    # write working test data to csv
+    test_path = '/home/markg/kaggle/titanic/data/working/'
+    data_test_filename = 'test_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
+    dfTest.to_csv(test_path + data_test_filename, index=False)
 
     # print data info
     print ("Train dataset: ")
