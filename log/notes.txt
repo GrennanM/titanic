@@ -1,2 +1,12 @@
 rf_submission_20_12_2018_1241 0.79425
-stacking_submission_20_12_2018_1258 
+
+rf_submission_20_12_2018_1701 0.79904
+- random forest model with parameters below
+grid_search_model = RandomForestClassifier(n_estimators=1500, max_depth=5,
+max_features='sqrt', min_samples_leaf=3, min_samples_split=10,
+bootstrap=True)
+- added log scale to age in preprocess
+- using train_20_12_2018_1655
+
+stacking_submission_20_12_2018_1758 0.79425
+- completed with parameter tuning

@@ -11,13 +11,8 @@ from datetime import datetime
 
 def main():
     # train dataset
-    dataset = '/home/markg/kaggle/titanic/data/working/train_20_12_2018_1239.csv'
+    dataset = '/home/markg/kaggle/titanic/data/working/train_20_12_2018_1655.csv'
     df = pd.read_csv(dataset, encoding='latin-1')
-    # df = df.drop(columns = ['Unnamed: 0']) # identifier column
-
-    # print first few rows in data and data types
-    # print(df.head())
-    # print (df.describe())
 
     # split into 80% training, 20% testing
     X = df.drop(columns = ['Survived'])
@@ -29,7 +24,7 @@ def main():
     #  min_samples_split=10, random_state=0, min_samples_leaf=4,
     #  max_features='log2', bootstrap=False)
 
-    # Accuracy = 0.8309
+    # Accuracy = 0.8339
     grid_search_model = RandomForestClassifier(n_estimators=1500, max_depth=5,
     max_features='sqrt', min_samples_leaf=3, min_samples_split=10,
     bootstrap=True)
@@ -42,10 +37,10 @@ def main():
     # # predict validation data set
     # y_pred = baseline_model.predict(X_test)
     # print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
-
-    # # cross-validation
-    # scores = cross_val_score(grid_search_model, X, y, cv=10, n_jobs=-1)
-    # print ("Accuracy: ", scores.mean())
+    #
+    # cross-validation
+    scores = cross_val_score(grid_search_model, X, y, cv=10, n_jobs=-1)
+    print ("Accuracy: ", scores.mean())
 
     # ################# Hyper-Parameter Tuning #########################
     # ###### Randomized Search #############
@@ -204,7 +199,7 @@ def main():
     # ###################### End Feature Importance Plot ######################
 
     # test dataset
-    dt = '/home/markg/kaggle/titanic/data/working/test_20_12_2018_1239.csv'
+    dt = '/home/markg/kaggle/titanic/data/working/test_20_12_2018_1655.csv'
     test_df = pd.read_csv(dt, encoding='latin-1')
 
     # prepare passengerID for submission file

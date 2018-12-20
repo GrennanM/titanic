@@ -10,15 +10,16 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from collections import OrderedDict
 from sklearn.model_selection import KFold
+from sklearn.svm import SVC
 from xgboost import XGBClassifier
 from datetime import datetime
 
 # train dataset
-dataset = '/home/markg/kaggle/titanic/data/working/train_20_12_2018_1239.csv'
+dataset = '/home/markg/kaggle/titanic/data/working/train_20_12_2018_1655.csv'
 train = pd.read_csv(dataset, encoding='latin-1')
 
 # test dataset
-dt = '/home/markg/kaggle/titanic/data/working/test_20_12_2018_1239.csv'
+dt = '/home/markg/kaggle/titanic/data/working/test_20_12_2018_1655.csv'
 test = pd.read_csv(dt, encoding='latin-1')
 
 # parameters for later
@@ -71,45 +72,53 @@ def get_oof(clf, x_train, y_train, x_test):
 # parameters for random forest
 rf_params = {
 'n_jobs': -1,
-'n_estimators': 500,
+'n_estimators': 1000,
 'warm_start': True,
-#'max_features': 0.2,
-'max_depth': 6,
-'min_samples_leaf': 2,
-'max_features' : 'sqrt',
+'max_features': 'sqrt',
+'max_depth': 5,
+'min_samples_leaf': 3,
+'min_samples_split': 10,
 'verbose': 0
 }
 
 # Extra Trees Parameters
 et_params = {
 'n_jobs': -1,
-'n_estimators':500,
-#'max_features': 0.5,
-'max_depth': 8,
-'min_samples_leaf': 2,
-'verbose': 0
+'n_estimators':1000,
+'max_features': 'sqrt',
+'max_depth': 7,
+'min_samples_leaf': 3,
+'verbose': 0,
+'min_samples_split': 3
 }
 
 # AdaBoost parameters
 ada_params = {
-'n_estimators': 500,
-'learning_rate' : 0.75
+'n_estimators': 1000,
+'learning_rate' : 0.3
 }
 
 # Gradient Boosting parameters
 gb_params = {
 'n_estimators': 500,
- #'max_features': 0.2,
-'max_depth': 5,
-'min_samples_leaf': 2,
+'max_depth': 7,
+'min_samples_leaf': 3,
+'min_samples_split': 3,
 'verbose': 0
 }
+
+# Support Vector Classifier parameters
+svc_params = {
+    'kernel' : 'linear',
+    'C' : 0.75
+    }
 
 # generate objects to represent models
 rf = SklearnHelper(clf=RandomForestClassifier, seed=SEED, params=rf_params)
 et = SklearnHelper(clf=ExtraTreesClassifier, seed=SEED, params=et_params)
 ada = SklearnHelper(clf=AdaBoostClassifier, seed=SEED, params=ada_params)
 gb = SklearnHelper(clf=GradientBoostingClassifier, seed=SEED, params=gb_params)
+svc = SklearnHelper(clf=SVC, seed=SEED, params=svc_params)
 
 # Create Numpy arrays of train, test and response to feed into models
 y_train = train['Survived'].ravel()
@@ -122,6 +131,7 @@ et_oof_train, et_oof_test = get_oof(et, x_train, y_train, x_test) # Extra Trees
 rf_oof_train, rf_oof_test = get_oof(rf,x_train, y_train, x_test) # Random Forest
 ada_oof_train, ada_oof_test = get_oof(ada, x_train, y_train, x_test) # AdaBoost
 gb_oof_train, gb_oof_test = get_oof(gb,x_train, y_train, x_test) # Gradient Boost
+svc_oof_train, svc_oof_test = get_oof(svc,x_train, y_train, x_test) # SVC
 
 # # feature importance
 # rf_feature = rf.feature_importances(x_train,y_train)
@@ -135,14 +145,15 @@ gb_oof_train, gb_oof_test = get_oof(gb,x_train, y_train, x_test) # Gradient Boos
 base_predictions_train = pd.DataFrame( {'RandomForest': rf_oof_train.ravel(),
      'ExtraTrees': et_oof_train.ravel(),
      'AdaBoost': ada_oof_train.ravel(),
-      'GradientBoost': gb_oof_train.ravel()
+      'GradientBoost': gb_oof_train.ravel(),
+      'SVC': svc_oof_train.ravel(),
     })
 # print (base_predictions_train.head())
 
 x_train = np.concatenate(( et_oof_train, rf_oof_train, ada_oof_train,
-                        gb_oof_train), axis=1)
+                        gb_oof_train, svc_oof_train), axis=1)
 x_test = np.concatenate(( et_oof_test, rf_oof_test, ada_oof_test,
-                            gb_oof_test), axis=1)
+                            gb_oof_test, svc_oof_test), axis=1)
 
 # second level model
 gbm = xgb.XGBClassifier(
@@ -158,14 +169,9 @@ gbm = xgb.XGBClassifier(
  nthread= -1,
  scale_pos_weight=1).fit(x_train, y_train)
 predictions = gbm.predict(x_test)
-#
-# # # Generate Submission File
-# # StackingSubmission = pd.DataFrame({ 'PassengerId': PassengerId,
-# #                             'Survived': predictions })
-# # StackingSubmission.to_csv("StackingSubmission.csv", index=False)
-#
-# # create submission file
-# submission = pd.DataFrame({'PassengerId':PassengerId, 'Survived':predictions})
-# path = '/home/markg/kaggle/titanic/data/submissions/'
-# filename = 'stacking_submission_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
-# submission.to_csv(path+filename, index=False)
+
+# create submission file
+submission = pd.DataFrame({'PassengerId':PassengerId, 'Survived':predictions})
+path = '/home/markg/kaggle/titanic/data/submissions/'
+filename = 'stacking_submission_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
+submission.to_csv(path+filename, index=False)
