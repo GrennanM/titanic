@@ -14,12 +14,12 @@ from xgboost import XGBClassifier
 from datetime import datetime
 
 # train dataset
-dataset = '/home/markg/kaggle/titanic/data/working/titanicCleanTrain.csv'
-train = pd.read_csv(dataset, encoding='latin-1', index_col=0)
+dataset = '/home/markg/kaggle/titanic/data/working/train_20_12_2018_1239.csv'
+train = pd.read_csv(dataset, encoding='latin-1')
 
 # test dataset
-dt = '/home/markg/kaggle/titanic/data/working/titanicCleanTest.csv'
-test = pd.read_csv(dt, encoding='latin-1', index_col=0)
+dt = '/home/markg/kaggle/titanic/data/working/test_20_12_2018_1239.csv'
+test = pd.read_csv(dt, encoding='latin-1')
 
 # parameters for later
 ntrain = train.shape[0]
@@ -158,14 +158,14 @@ gbm = xgb.XGBClassifier(
  nthread= -1,
  scale_pos_weight=1).fit(x_train, y_train)
 predictions = gbm.predict(x_test)
-
-# # Generate Submission File
-# StackingSubmission = pd.DataFrame({ 'PassengerId': PassengerId,
-#                             'Survived': predictions })
-# StackingSubmission.to_csv("StackingSubmission.csv", index=False)
-
-# create submission file
-submission = pd.DataFrame({'PassengerId':PassengerId, 'Survived':predictions})
-path = '/home/markg/kaggle/titanic/data/submissions/'
-filename = 'stacking_submission_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
-submission.to_csv(path+filename, index=False)
+#
+# # # Generate Submission File
+# # StackingSubmission = pd.DataFrame({ 'PassengerId': PassengerId,
+# #                             'Survived': predictions })
+# # StackingSubmission.to_csv("StackingSubmission.csv", index=False)
+#
+# # create submission file
+# submission = pd.DataFrame({'PassengerId':PassengerId, 'Survived':predictions})
+# path = '/home/markg/kaggle/titanic/data/submissions/'
+# filename = 'stacking_submission_' + str(datetime.now().strftime('%d_%m_%Y_%H%M')) + '.csv'
+# submission.to_csv(path+filename, index=False)

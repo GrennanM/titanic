@@ -7,9 +7,8 @@ from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 
 def main():
     # train dataset
-    dataset = '/home/markg/kaggle/titanic/titanicCleanTrain.csv'
+    dataset = '/home/markg/kaggle/titanic/data/working/train_20_12_2018_1239.csv'
     df = pd.read_csv(dataset, encoding='latin-1')
-    df = df.drop(columns = ['Unnamed: 0']) # identifier column
 
     # split into 90% training, 10% testing
     X = df.drop(columns = ['Survived'])

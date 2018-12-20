@@ -11,8 +11,8 @@ from datetime import datetime
 
 def main():
     # train dataset
-    dataset = '/home/markg/kaggle/titanic/data/working/titanicCleanTrain.csv'
-    df = pd.read_csv(dataset, encoding='latin-1', index_col=0)
+    dataset = '/home/markg/kaggle/titanic/data/working/train_20_12_2018_1239.csv'
+    df = pd.read_csv(dataset, encoding='latin-1')
     # df = df.drop(columns = ['Unnamed: 0']) # identifier column
 
     # print first few rows in data and data types
@@ -204,8 +204,8 @@ def main():
     # ###################### End Feature Importance Plot ######################
 
     # test dataset
-    dt = '/home/markg/kaggle/titanic/data/working/titanicCleanTest.csv'
-    test_df = pd.read_csv(dt, encoding='latin-1', index_col=0)
+    dt = '/home/markg/kaggle/titanic/data/working/test_20_12_2018_1239.csv'
+    test_df = pd.read_csv(dt, encoding='latin-1')
 
     # prepare passengerID for submission file
     passengerID = test_df['PassengerId']
