@@ -23,7 +23,7 @@ dt = '/home/markg/kaggle/titanic/data/working/test_20_12_2018_1655.csv'
 test = pd.read_csv(dt, encoding='latin-1')
 
 # parameters for later
-ntrain = train.shape[0]
+ntrain = train.shape[0] # number of entries/rows in train
 ntest = test.shape[0]
 SEED = 0
 NFOLDS = 5
@@ -51,7 +51,7 @@ class SklearnHelper(object):
 
 # get out of fold predictions
 def get_oof(clf, x_train, y_train, x_test):
-    oof_train = np.zeros((ntrain,))
+    oof_train = np.zeros((ntrain,)) # 839 zeros in array
     oof_test = np.zeros((ntest,))
     oof_test_skf = np.empty((NFOLDS, ntest))
 
@@ -66,6 +66,7 @@ def get_oof(clf, x_train, y_train, x_test):
         oof_test_skf[i, :] = clf.predict(x_test)
 
     oof_test[:] = oof_test_skf.mean(axis=0)
+     # (-1, 1)  reshapes to a single column
     return oof_train.reshape(-1, 1), oof_test.reshape(-1, 1)
 
 # parameters for models
@@ -121,9 +122,9 @@ gb = SklearnHelper(clf=GradientBoostingClassifier, seed=SEED, params=gb_params)
 svc = SklearnHelper(clf=SVC, seed=SEED, params=svc_params)
 
 # Create Numpy arrays of train, test and response to feed into models
-y_train = train['Survived'].ravel()
+y_train = train['Survived'].ravel() # flattens response to a 1D array
 train = train.drop(['Survived'], axis=1)
-x_train = train.values # Creates an array of the train data
+x_train = train.values # Creates an np array of the training data
 x_test = test.values # Creats an array of the test data
 
 # Create our OOF train and test predictions. These base results will be used as new features
@@ -141,7 +142,6 @@ svc_oof_train, svc_oof_test = get_oof(svc,x_train, y_train, x_test) # SVC
 #
 # # rffeatures=list(rf_feature)
 
-
 base_predictions_train = pd.DataFrame( {'RandomForest': rf_oof_train.ravel(),
      'ExtraTrees': et_oof_train.ravel(),
      'AdaBoost': ada_oof_train.ravel(),
@@ -150,6 +150,7 @@ base_predictions_train = pd.DataFrame( {'RandomForest': rf_oof_train.ravel(),
     })
 # print (base_predictions_train.head())
 
+# create dataset for second level
 x_train = np.concatenate(( et_oof_train, rf_oof_train, ada_oof_train,
                         gb_oof_train, svc_oof_train), axis=1)
 x_test = np.concatenate(( et_oof_test, rf_oof_test, ada_oof_test,
