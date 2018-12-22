@@ -70,7 +70,7 @@ def get_oof(clf, x_train, y_train, x_test):
     return oof_train.reshape(-1, 1), oof_test.reshape(-1, 1)
 
 # parameters for models
-# parameters for random forest
+# random forest
 rf_params = {
 'n_jobs': -1,
 'n_estimators': 1000,
